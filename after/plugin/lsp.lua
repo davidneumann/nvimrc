@@ -3,9 +3,25 @@ local lsp = require('lsp-zero')
 lsp.preset('recommended')
 
 lsp.ensure_installed({
-    --'tsserver',
-    'eslint',
-    'rust_analyzer'
+  'tsserver',
+  'eslint',
+  -- 'rust_analyzer'
+})
+
+require("lspconfig").tsserver.setup({
+  capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities()),
+  on_attach = function(client)
+    client.resolved_capabilities.document_formatting = false
+    -- client.cmp_nvim_lsp.default_capabilities.document_formatting = false
+  end,
+})
+
+require("lspconfig").eslint.setup({
+  capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities()),
+  on_attach = function(client)
+    client.resolved_capabilities.document_formatting = false
+    -- client.cmp_nvim_lsp.default_capabilities.document_formatting = false
+  end,
 })
 
 -- Fix Undefined global 'vim'
@@ -20,10 +36,10 @@ local cmp_select = { behavior = cmp.SelectBehavior.Select }
 -- 	["<C-l>"] = cmp.mapping.complete(),
 -- })
 local cmp_mappings = lsp.defaults.cmp_mappings({
-    ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
-    ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
-    ['<C-y>'] = cmp.mapping.confirm({ select = true }),
-    ["<C-Space>"] = cmp.mapping.complete(),
+  ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
+  ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
+  ['<C-y>'] = cmp.mapping.confirm({ select = true }),
+  ["<C-Space>"] = cmp.mapping.complete(),
 })
 
 cmp_mappings['<Tab>'] = nil
@@ -34,35 +50,44 @@ cmp_mappings['<S-Tab>'] = nil
 -- })
 
 lsp.setup_nvim_cmp({
-    mapping = cmp_mappings
+  mapping = cmp_mappings
 })
 
 lsp.on_attach(function(client, bufnr)
-    local opts = { buffer = bufnr, remap = false }
+  -- lsp.buffer_autoformat()
+  -- require "lsp_signature".on_attach({}, bufnr)     -- Note: add in lsp client on-attach
 
-    local function create_opts_with_desc(desc)
-        local new_opts = vim.tbl_extend("force", opts, { desc = desc })
-        return new_opts
-    end
+  local opts = { buffer = bufnr, remap = false }
 
-    vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, create_opts_with_desc("Go to definition"))
-    vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, create_opts_with_desc("LSP Hover"))
-    vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end,
-        create_opts_with_desc("Lists all symbols in the current workspace"))
-    vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end,
-        create_opts_with_desc("Show diagnostics in a floating window"))
-    vim.keymap.set("n", "]d", function() vim.diagnostic.goto_next() end, create_opts_with_desc("Next diagnostic"))
-    vim.keymap.set("n", "[d", function() vim.diagnostic.goto_prev() end, create_opts_with_desc("Previous diagnostic"))
-    vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, create_opts_with_desc("Code action"))
-    vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, create_opts_with_desc("LSP references"))
-    vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, create_opts_with_desc("LSP rename"))
-    vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, create_opts_with_desc("Signature help"))
-    vim.keymap.set("n", "<leader>f", function() vim.lsp.buf.format() end, create_opts_with_desc("Format document"))
+  local function create_opts_with_desc(desc)
+    local new_opts = vim.tbl_extend("force", opts, { desc = desc })
+    return new_opts
+  end
+
+  vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, create_opts_with_desc("Go to definition"))
+  vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, create_opts_with_desc("LSP Hover"))
+  vim.keymap.set("n", "<leader>pws", function() vim.lsp.buf.workspace_symbol() end,
+    create_opts_with_desc("Lists all symbols in the current workspace"))
+  vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end,
+    create_opts_with_desc("Show diagnostics in a floating window"))
+  vim.keymap.set("n", "]d", function() vim.diagnostic.goto_next() end, create_opts_with_desc("Next diagnostic"))
+  vim.keymap.set("n", "[d", function() vim.diagnostic.goto_prev() end, create_opts_with_desc("Previous diagnostic"))
+  vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, create_opts_with_desc("Code action"))
+  vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, create_opts_with_desc("LSP references"))
+  vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, create_opts_with_desc("LSP rename"))
+  vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, create_opts_with_desc("Signature help"))
+  vim.keymap.set("n", "<leader>f", function() vim.lsp.buf.format() end, create_opts_with_desc("Format document"))
 end)
+
+-- lsp.format_on_save({
+--   servers = {
+--     ['eslint'] = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
+--   }
+-- })
 
 lsp.setup()
 
-require 'lspconfig'.eslint.setup {}
+--require 'lspconfig'.eslint.setup {}
 -- require('typescript').setup({
 --   server = {
 --     on_attach = function(client, bufnr)
@@ -75,28 +100,81 @@ require 'lspconfig'.eslint.setup {}
 -- })
 
 require 'lspconfig'.lua_ls.setup {
-    settings = {
-        Lua = {
-            runtime = {
-                -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
-                version = 'LuaJIT',
-            },
-            diagnostics = {
-                -- Get the language server to recognize the `vim` global
-                globals = { 'vim' },
-            },
-            workspace = {
-                -- Make the server aware of Neovim runtime files
-                library = vim.api.nvim_get_runtime_file("", true),
-            },
-            -- Do not send telemetry data containing a randomized but unique identifier
-            telemetry = {
-                enable = false,
-            },
-        },
+  settings = {
+    Lua = {
+      runtime = {
+        -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+        version = 'LuaJIT',
+      },
+      diagnostics = {
+        -- Get the language server to recognize the `vim` global
+        globals = { 'vim' },
+      },
+      workspace = {
+        -- Make the server aware of Neovim runtime files
+        library = vim.api.nvim_get_runtime_file("", true),
+      },
+      -- Do not send telemetry data containing a randomized but unique identifier
+      telemetry = {
+        enable = false,
+      },
     },
+  },
 }
 
+local null_ls = require("null-ls")
+
+local group = vim.api.nvim_create_augroup("lsp_format_on_save", { clear = false })
+local event = "BufWritePre" -- or "BufWritePost"
+local async = event == "BufWritePost"
+
+null_ls.setup({
+  on_attach = function(client, bufnr)
+    if client.supports_method("textDocument/formatting") then
+      -- vim.keymap.set("n", "<Leader>f", function()
+      --   vim.lsp.buf.format({ bufnr = vim.api.nvim_get_current_buf() })
+      -- end, { buffer = bufnr, desc = "[lsp] format" })
+
+      -- format on save
+      -- vim.api.nvim_clear_autocmds({ buffer = bufnr, group = group })
+      -- vim.api.nvim_create_autocmd(event, {
+      --   buffer = bufnr,
+      --   group = group,
+      --   callback = function()
+      --     vim.lsp.buf.format({ bufnr = bufnr, async = async })
+      --   end,
+      --   desc = "[lsp] format on save",
+      -- })
+    end
+
+    if client.supports_method("textDocument/rangeFormatting") then
+      -- vim.keymap.set("x", "<Leader>f", function()
+      --   vim.lsp.buf.format({ bufnr = vim.api.nvim_get_current_buf() })
+      -- end, { buffer = bufnr, desc = "[lsp] format" })
+    end
+  end,
+})
+
+local prettier = require("prettier")
+
+prettier.setup({
+  bin = 'prettierd', -- or `'prettierd'` (v0.23.3+)
+  filetypes = {
+    "css",
+    "graphql",
+    "html",
+    "javascript",
+    "javascriptreact",
+    "json",
+    "less",
+    "markdown",
+    "scss",
+    "typescript",
+    "typescriptreact",
+    "yaml",
+  },
+})
+
 vim.diagnostic.config({
-    virtual_text = true
+  virtual_text = true
 })
