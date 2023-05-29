@@ -9,10 +9,19 @@ wk.register({
     ["<leader>p"] =
     {
         name = "Navigation and search",
+        v = {
+            "<cmd>Explore<cr>",
+            "File explorer / Netrw",
+        },
     },
 
     ["<leader>g"] =
     {
         name = "Git stuff"
+    },
+
+    ["<leader>h"] =
+    {
+        name = "Harpoon"
     }
 })
