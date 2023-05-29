@@ -1,1 +1,1 @@
-vim.keymap.set("n", "<leader>gs", vim.cmd.Git, { desc = "Search in git" });
+vim.keymap.set("n", "<leader>gs", vim.cmd.Git, { desc = "Open vim figutive" });
