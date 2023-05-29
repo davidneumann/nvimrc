@@ -1,5 +1,7 @@
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex, { desc = "File explorer / Netrw" })
+--print("Hello?")
 
+vim.keymap.set({ "n", "v" }, "<leader>", "<nop>")
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move selected lines down" })
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move selected lines up" })
 
@@ -27,4 +29,28 @@ vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz", { desc = "Next quick fix it
 vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz", { desc = "Previous quick fix item local" })
 
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]],
-    { desc = "Regex replace current word" })
+  { desc = "Regex replace current word" })
+
+-- vim.keymap.set("i", "\"", "\"\"<left>")
+-- vim.keymap.set("i", "'", " '<left>")
+-- vim.keymap.set("i", "(", "()<left>")
+-- vim.keymap.set("i", "[", "[]<left>")
+-- vim.keymap.set("i", "{", "{}<left>")
+-- vim.keymap.set("i", "{", "{}<left>")
+
+-- close quickfix menu after selecting choice
+vim.api.nvim_create_autocmd(
+  "FileType", {
+    pattern = { "qf" },
+    command = [[nnoremap <buffer> <CR> <CR>:cclose<CR>]]
+  })
+
+
+vim.keymap.set("n", "<leader>\\", ":Neotree toggle<CR>", { desc = "Toggle neotree" })
+
+vim.keymap.set("n", "<leader>t", ":TroubleToggle<CR>", { desc = "Toggle trouble" })
+
+vim.keymap.set("i", "<C-k>", vim.lsp.buf.signature_help, { desc = "Show signature help" })
+-- vim.keymap.set('i', '<C-s>', function()
+--   require('lsp_signature').toggle_float_win()
+-- end, { silent = true, noremap = true, desc = 'toggle signature' })
