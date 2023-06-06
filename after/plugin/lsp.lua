@@ -145,12 +145,24 @@ null_ls.setup({
       --   end,
       --   desc = "[lsp] format on save",
       -- })
+-- Super dumb omnisharp LSP fix
+-- See: https://github.com/OmniSharp/omnisharp-roslyn/issues/2483
+vim.api.nvim_create_autocmd("LspAttach", {
+  callback = function(ev)
+    local client = vim.lsp.get_client_by_id(ev.data.client_id)
+    local function toSnakeCase(str)
+      return string.gsub(str, "%s*[- ]%s*", "_")
     end
 
-    if client.supports_method("textDocument/rangeFormatting") then
-      -- vim.keymap.set("x", "<Leader>f", function()
-      --   vim.lsp.buf.format({ bufnr = vim.api.nvim_get_current_buf() })
-      -- end, { buffer = bufnr, desc = "[lsp] format" })
+    if client.name == 'omnisharp' then
+      local tokenModifiers = client.server_capabilities.semanticTokensProvider.legend.tokenModifiers
+      for i, v in ipairs(tokenModifiers) do
+        tokenModifiers[i] = toSnakeCase(v)
+      end
+      local tokenTypes = client.server_capabilities.semanticTokensProvider.legend.tokenTypes
+      for i, v in ipairs(tokenTypes) do
+        tokenTypes[i] = toSnakeCase(v)
+      end
     end
   end,
 })

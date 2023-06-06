@@ -24,4 +24,8 @@ wk.register({
     {
         name = "Harpoon"
     }
+  ["<leader>l"] =
+  {
+    name = "Debugging"
+  },
 })

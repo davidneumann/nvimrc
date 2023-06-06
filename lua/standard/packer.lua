@@ -372,7 +372,26 @@ return require('packer').startup(function(use)
   }
 
   use("ray-x/lsp_signature.nvim")
+  --neovim lsp. As in LSP stuff for neovim configs themselves
+  use 'folke/neodev.nvim'
 
+  --Debugging stuff
+  use {
+    "mfussenegger/nvim-dap",
+    opt = true,
+    event = "BufReadPre",
+    module = { "dap" },
+    wants = { "nvim-dap-virtual-text", "nvim-dap-ui", "which-key.nvim" },
+    requires = {
+      "theHamsta/nvim-dap-virtual-text",
+      "rcarriga/nvim-dap-ui",
+      "nvim-telescope/telescope-dap.nvim",
+      { "jbyuki/one-small-step-for-vimkind", module = "osv" },
+    },
+    config = function()
+      require("config.dap").setup()
+    end,
+  }
 
   --
 end)
