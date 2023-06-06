@@ -16,13 +16,13 @@ require("lspconfig").tsserver.setup({
   end,
 })
 
-require("lspconfig").eslint.setup({
-  capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities()),
-  on_attach = function(client)
-    client.resolved_capabilities.document_formatting = false
-    -- client.cmp_nvim_lsp.default_capabilities.document_formatting = false
-  end,
-})
+-- require("lspconfig").eslint.setup({
+--   capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities()),
+--   on_attach = function(client)
+--     client.resolved_capabilities.document_formatting = false
+--     -- client.cmp_nvim_lsp.default_capabilities.document_formatting = false
+--   end,
+-- })
 
 -- Fix Undefined global 'vim'
 lsp.nvim_workspace()
@@ -64,6 +64,11 @@ lsp.on_attach(function(client, bufnr)
     return new_opts
   end
 
+  if client.name == "tsserver" then
+    -- client.resolved_capabilities.document_formatting = false          -- 0.7 and earlier
+    client.server_capabilities.documentFormattingProvider = false -- 0.8 and later
+  end
+
   vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, create_opts_with_desc("Go to definition"))
   vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, create_opts_with_desc("LSP Hover"))
   vim.keymap.set("n", "<leader>pws", function() vim.lsp.buf.workspace_symbol() end,
@@ -85,19 +90,45 @@ end)
 --   }
 -- })
 
+lsp.format_on_save({
+  servers = {
+    ['null-ls'] = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
+  }
+})
+
+
 lsp.setup()
 
---require 'lspconfig'.eslint.setup {}
--- require('typescript').setup({
---   server = {
---     on_attach = function(client, bufnr)
---       -- You can find more commands in the documentation:
---       -- https://github.com/jose-elias-alvarez/typescript.nvim#commands
---
---       vim.keymap.set('n', '<leader>ci', '<cmd>TypescriptAddMissingImports<cr>', {buffer = bufnr})
---     end
---   }
--- })
+require 'lspconfig'.eslint.setup {}
+
+local null_ls = require("null-ls")
+
+null_ls.setup({
+  sources = {
+    --- Replace these with the tools you have installed
+    null_ls.builtins.formatting.prettierd,
+  }
+})
+
+local prettier = require("prettier")
+
+prettier.setup({
+  bin = 'prettierd', -- or `'prettierd'` (v0.23.3+)
+  filetypes = {
+    "css",
+    "graphql",
+    "html",
+    "javascript",
+    "javascriptreact",
+    "json",
+    "less",
+    "markdown",
+    "scss",
+    "typescript",
+    "typescriptreact",
+    "yaml",
+  },
+})
 
 require 'lspconfig'.lua_ls.setup {
   settings = {
@@ -122,29 +153,10 @@ require 'lspconfig'.lua_ls.setup {
   },
 }
 
-local null_ls = require("null-ls")
+vim.diagnostic.config({
+  virtual_text = true
+})
 
-local group = vim.api.nvim_create_augroup("lsp_format_on_save", { clear = false })
-local event = "BufWritePre" -- or "BufWritePost"
-local async = event == "BufWritePost"
-
-null_ls.setup({
-  on_attach = function(client, bufnr)
-    if client.supports_method("textDocument/formatting") then
-      -- vim.keymap.set("n", "<Leader>f", function()
-      --   vim.lsp.buf.format({ bufnr = vim.api.nvim_get_current_buf() })
-      -- end, { buffer = bufnr, desc = "[lsp] format" })
-
-      -- format on save
-      -- vim.api.nvim_clear_autocmds({ buffer = bufnr, group = group })
-      -- vim.api.nvim_create_autocmd(event, {
-      --   buffer = bufnr,
-      --   group = group,
-      --   callback = function()
-      --     vim.lsp.buf.format({ bufnr = bufnr, async = async })
-      --   end,
-      --   desc = "[lsp] format on save",
-      -- })
 -- Super dumb omnisharp LSP fix
 -- See: https://github.com/OmniSharp/omnisharp-roslyn/issues/2483
 vim.api.nvim_create_autocmd("LspAttach", {
@@ -165,28 +177,4 @@ vim.api.nvim_create_autocmd("LspAttach", {
       end
     end
   end,
-})
-
-local prettier = require("prettier")
-
-prettier.setup({
-  bin = 'prettierd', -- or `'prettierd'` (v0.23.3+)
-  filetypes = {
-    "css",
-    "graphql",
-    "html",
-    "javascript",
-    "javascriptreact",
-    "json",
-    "less",
-    "markdown",
-    "scss",
-    "typescript",
-    "typescriptreact",
-    "yaml",
-  },
-})
-
-vim.diagnostic.config({
-  virtual_text = true
 })

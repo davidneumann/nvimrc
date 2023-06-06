@@ -371,7 +371,8 @@ return require('packer').startup(function(use)
     end
   }
 
-  use("ray-x/lsp_signature.nvim")
+  -- use("ray-x/lsp_signature.nvim")
+
   --neovim lsp. As in LSP stuff for neovim configs themselves
   use 'folke/neodev.nvim'
 
@@ -392,6 +393,8 @@ return require('packer').startup(function(use)
       require("config.dap").setup()
     end,
   }
+
+  use 'f-person/git-blame.nvim'
 
   --
 end)
