@@ -46,7 +46,8 @@ vim.api.nvim_create_autocmd(
   })
 
 
-vim.keymap.set("n", "<leader>\\", ":Neotree toggle<CR>", { desc = "Toggle neotree" })
+vim.keymap.set("n", "<leader>\\", ":NvimTreeToggle<CR>", { desc = "Toggle neotree" })
+vim.keymap.set("n", "<leader>|", ":NvimTreeFocus<CR>", { desc = "Focus neotree" })
 
 vim.keymap.set("n", "<leader>t", ":TroubleToggle<CR>", { desc = "Toggle trouble" })
 
