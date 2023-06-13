@@ -92,7 +92,7 @@ end)
 
 lsp.format_on_save({
   servers = {
-    ['null-ls'] = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
+    ['null-ls'] = { "javascript", "javascriptreact", "typescript", "typescriptreact", "python" },
   }
 })
 
@@ -107,6 +107,9 @@ null_ls.setup({
   sources = {
     --- Replace these with the tools you have installed
     null_ls.builtins.formatting.prettierd,
+    null_ls.builtins.diagnostics.pylint,
+    null_ls.builtins.diagnostics.ruff,
+    null_ls.builtins.formatting.black,
   }
 })
 
@@ -178,3 +181,5 @@ vim.api.nvim_create_autocmd("LspAttach", {
     end
   end,
 })
+
+require 'lspconfig'.pyright.setup {}

@@ -411,6 +411,16 @@ return require('packer').startup(function(use)
       require("config.dap").setup()
     end,
   }
+  use {
+    'mfussenegger/nvim-dap-python',
+    requires = { 'mfussenegger/nvim-dap' },
+    -- ft = { 'python' },
+    -- config = function()
+    --   local path = "~/.local/share/nvim/mason/packages/debugpy/venv/bin/python"
+    --   require("dap-python").setup(path)
+    -- end
+  }
+
 
   use 'f-person/git-blame.nvim'
 
