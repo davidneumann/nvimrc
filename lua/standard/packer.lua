@@ -34,7 +34,7 @@ return require('packer').startup(function(use)
       pcall(vim.cmd, 'MasonUpdate')
     end,
     config = function()
-      require("mason-registry"):on("package:install:success", require("plugins.lsp.python").mason_post_install)
+      -- require("mason-registry"):on("package:install:success", require("plugins.lsp.python").mason_post_install)
     end
   }
 
