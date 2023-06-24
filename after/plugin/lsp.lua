@@ -5,6 +5,8 @@ lsp.preset('recommended')
 lsp.ensure_installed({
   'tsserver',
   'eslint',
+  'ruff_lsp'
+  -- 'pylint',
   -- 'rust_analyzer'
 })
 
@@ -92,7 +94,8 @@ end)
 
 lsp.format_on_save({
   servers = {
-    ['null-ls'] = { "javascript", "javascriptreact", "typescript", "typescriptreact", "python" },
+    ['null-ls'] = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
+    ['pylsp'] = { "python" },
   }
 })
 
@@ -101,15 +104,23 @@ lsp.setup()
 
 require 'lspconfig'.eslint.setup {}
 
+require('lspconfig').ruff_lsp.setup {}
+require 'lspconfig'.pylsp.setup {
+  settings = {
+    pylsp = {
+      plugins = {
+        pydocsytle = { enabled = true },
+      }
+    }
+  }
+}
+
 local null_ls = require("null-ls")
 
 null_ls.setup({
   sources = {
     --- Replace these with the tools you have installed
     null_ls.builtins.formatting.prettierd,
-    null_ls.builtins.diagnostics.pylint,
-    null_ls.builtins.diagnostics.ruff,
-    null_ls.builtins.formatting.black,
   }
 })
 
@@ -182,4 +193,4 @@ vim.api.nvim_create_autocmd("LspAttach", {
   end,
 })
 
-require 'lspconfig'.pyright.setup {}
+-- require 'lspconfig'.pyright.setup {}

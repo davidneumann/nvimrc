@@ -29,18 +29,21 @@ return require('packer').startup(function(use)
   use('tpope/vim-fugitive')
 
   use {
+    'williamboman/mason.nvim',
+    run = function()
+      pcall(vim.cmd, 'MasonUpdate')
+    end,
+    config = function()
+      require("mason-registry"):on("package:install:success", require("plugins.lsp.python").mason_post_install)
+    end
+  }
+
+  use {
     'VonHeikemen/lsp-zero.nvim',
     branch = 'v2.x',
     requires = {
       -- LSP Support
-      { 'neovim/nvim-lspconfig' }, -- Required
-      {
-        -- Optional
-        'williamboman/mason.nvim',
-        run = function()
-          pcall(vim.cmd, 'MasonUpdate')
-        end,
-      },
+      { 'neovim/nvim-lspconfig' },             -- Required
       { 'williamboman/mason-lspconfig.nvim' }, -- Optional
 
       -- Autocompletion
