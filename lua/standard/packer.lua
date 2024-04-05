@@ -23,6 +23,9 @@ return require('packer').startup(function(use)
 
   use('nvim-treesitter/nvim-treesitter', { run = ':TSUpdate' })
   use('nvim-treesitter/nvim-treesitter-context')
+  -- use('nvim-treesitter/nvim-treesitter-angular')
+  use({ "elgiano/nvim-treesitter-angular", branch = "topic/jsx-fix" })
+  use('norcalli/nvim-colorizer.lua')
 
   use('theprimeagen/harpoon')
   use('mbbill/undotree')
@@ -426,6 +429,23 @@ return require('packer').startup(function(use)
 
 
   use 'f-person/git-blame.nvim'
+
+  -- use {
+  --   "pmizio/typescript-tools.nvim",
+  --   requires = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+  --   config = function()
+  --     require("typescript-tools").setup {
+  --       settings = {
+  --         tsserver_plugins = {
+  --           -- for TypeScript v4.9+
+  --           "@styled/typescript-styled-plugin",
+  --           -- or for older TypeScript versions
+  --           -- "typescript-styled-plugin",
+  --         },
+  --       },
+  --     }
+  --   end,
+  -- }
 
   --
 end)

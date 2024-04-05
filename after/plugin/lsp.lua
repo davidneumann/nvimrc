@@ -94,7 +94,7 @@ end)
 
 lsp.format_on_save({
   servers = {
-    ['null-ls'] = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
+    ['null-ls'] = { "javascript", "javascriptreact", "typescript", "typescriptreact", "html", "css" },
     ['pylsp'] = { "python" },
   }
 })
@@ -194,3 +194,17 @@ vim.api.nvim_create_autocmd("LspAttach", {
 })
 
 -- require 'lspconfig'.pyright.setup {}
+
+require 'lspconfig'.angularls.setup {
+  on_attach = function(client)
+    client.server_capabilities.renameProvider = false
+  end,
+}
+
+--Enable (broadcasting) snippet capability for completion
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+require 'lspconfig'.cssls.setup {
+  capabilities = capabilities,
+}
